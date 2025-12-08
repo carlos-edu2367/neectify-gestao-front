@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Ajuste para a URL do seu backend FastAPI
-const API_URL = "http://localhost:8000";
+const API_URL = "https://neectify-backend-production.up.railway.app";
 
 const api = axios.create({
     baseURL: API_URL,
