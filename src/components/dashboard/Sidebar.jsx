@@ -1,10 +1,11 @@
-import { LayoutDashboard, Inbox, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Inbox, Settings, LogOut, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const Sidebar = ({ active, onNavigate, onLogout }) => {
     const menu = [
         { id: 'dashboard', icon: LayoutDashboard, label: 'Visão Geral' },
         { id: 'solicitacoes', icon: Inbox, label: 'Solicitações' },
+        { id: 'servicos', icon: Briefcase, label: 'Serviços' }, // Novo item
         { id: 'config', icon: Settings, label: 'Configurações' },
     ];
 
