@@ -85,8 +85,19 @@ test.describe('desktop (ponteiro fino)', () => {
     await expect(coluna(page, 'Conversando').locator(`[data-nome="${nome}"]`)).toHaveCount(0)
   })
 
-  test('sem menu "Mover para…" no desktop', async ({ page }) => {
-    await expect(page.getByRole('combobox', { name: 'Mover para…' })).toHaveCount(0)
+  test('teclado: select "Mover para…" tambem muda o status no desktop', async ({ page }) => {
+    const card = coluna(page, 'Novo').getByTestId('card-lead').first()
+    const nome = await card.getAttribute('data-nome')
+    const patch = page.waitForRequest((r) => r.method() === 'PATCH' && /\/v1\/leads\//.test(r.url()))
+    await card.getByRole('combobox', { name: 'Mover para…' }).selectOption({ label: 'Conversando' })
+    expect((await patch).postDataJSON()).toEqual({ status: 'conversando' })
+    await expect(coluna(page, 'Conversando').locator(`[data-nome="${nome}"]`)).toBeVisible()
+  })
+
+  test('tag de categoria usa o rotulo curto', async ({ page }) => {
+    const card = page.locator('[data-categoria="conversar"]').first()
+    await expect(card).toContainText('Conversar')
+    await expect(card).not.toContainText('Ainda')
   })
 })
 

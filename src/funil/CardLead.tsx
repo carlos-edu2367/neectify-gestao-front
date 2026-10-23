@@ -2,17 +2,15 @@ import { useDraggable } from '@dnd-kit/core'
 import { Link, useNavigate } from 'react-router-dom'
 import type { LeadOut, LeadStatus } from '../api/types'
 import { COLUNAS, diasParado, estaParado } from '../lib/funil'
-import { CANAL_LABEL, CATEGORIA_LABEL, CATEGORIA_TAG, LEAD_STATUS_LABEL, URGENCIA_LABEL } from '../lib/labels'
+import { CANAL_LABEL, CATEGORIA_CURTA, CATEGORIA_TAG, LEAD_STATUS_LABEL, URGENCIA_LABEL } from '../lib/labels'
 
 interface Props {
   lead: LeadOut
   agora: Date
-  /** true em toque: mostra o menu "Mover para…" no lugar do arraste. */
+  /** true em toque: sem arraste; o menu "Mover para…" fica grande. */
   menu: boolean
   onMover: (id: string, status: LeadStatus) => void
 }
-
-const CATEGORIA_CURTA = (c: LeadOut['categoria']) => CATEGORIA_LABEL[c].split(/[ ,]/)[0]
 
 function textoParado(dias: number) {
   if (dias === 0) return 'atualizado hoje'
@@ -55,7 +53,7 @@ export function CardLead({ lead, agora, menu, onMover }: Props) {
           className="shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide"
           style={{ color: tag.color, background: tag.background, borderColor: tag.border }}
         >
-          {CATEGORIA_CURTA(lead.categoria)}
+          {CATEGORIA_CURTA[lead.categoria]}
         </span>
       </div>
       <p className="mt-2 line-clamp-2 text-xs text-text/80">{lead.dor}</p>
@@ -67,24 +65,27 @@ export function CardLead({ lead, agora, menu, onMover }: Props) {
       <p className={`mt-1.5 font-mono text-[11px] ${parado ? 'font-medium text-cyan' : 'text-muted'}`}>
         {textoParado(dias)}
       </p>
-      {menu && (
-        <select
-          aria-label="Mover para…"
-          value=""
-          onClick={(e) => e.stopPropagation()}
-          onChange={(e) => {
-            if (e.target.value) onMover(lead.id, e.target.value as LeadStatus)
-          }}
-          className="mt-2.5 block w-full rounded-md border border-line bg-ink px-2 py-2 text-base text-text"
-        >
-          <option value="">Mover para…</option>
-          {COLUNAS.filter((c) => c !== lead.status).map((c) => (
-            <option key={c} value={c}>
-              {LEAD_STATUS_LABEL[c]}
-            </option>
-          ))}
-        </select>
-      )}
+      <select
+        aria-label="Mover para…"
+        value=""
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+        onChange={(e) => {
+          if (e.target.value) onMover(lead.id, e.target.value as LeadStatus)
+        }}
+        className={
+          menu
+            ? 'mt-2.5 block w-full rounded-md border border-line bg-ink px-2 py-2 text-base text-text'
+            : 'mt-2 block w-full rounded border border-line bg-ink px-1.5 py-1 font-mono text-[11px] text-muted hover:text-text'
+        }
+      >
+        <option value="">Mover para…</option>
+        {COLUNAS.filter((c) => c !== lead.status).map((c) => (
+          <option key={c} value={c}>
+            {LEAD_STATUS_LABEL[c]}
+          </option>
+        ))}
+      </select>
     </article>
   )
 }

@@ -16,6 +16,15 @@ export const CATEGORIA_LABEL: Record<Categoria, string> = {
   conversar: 'Ainda não sei, quero conversar',
 }
 
+/** Rotulo curto para tags em cards e cabecalhos. */
+export const CATEGORIA_CURTA: Record<Categoria, string> = {
+  site: 'Site',
+  automacao: 'Automação',
+  ia: 'IA',
+  sistema: 'Sistema',
+  conversar: 'Conversar',
+}
+
 export const PORTE_LABEL: Record<Porte, string> = {
   solo: 'Só eu',
   ate10: 'Até 10 pessoas',
