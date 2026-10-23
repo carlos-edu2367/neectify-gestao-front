@@ -51,7 +51,7 @@ test('Sair chama logout e volta ao login', async ({ page }) => {
   const logout = page.waitForRequest((r) => r.url().includes('/v1/auth/logout') && r.method() === 'POST')
   await page.getByRole('navigation', { name: 'Principal' }).getByText('Sair', { exact: true }).click()
   await logout
-  await expect(page).toHaveURL(/\/login/)
+  await expect(page).toHaveURL(/\/login$/)
   await page.goto('/dashboard')
   await expect(page).toHaveURL(/\/login\?voltar=/)
 })
@@ -62,5 +62,5 @@ test('falha no logout ainda limpa a sessao local e vai ao login', async ({ page 
   await expect(page).toHaveURL(/\/funil$/)
   await page.route('**/v1/auth/logout', (r) => r.fulfill({ status: 500, body: '{"detail":"x"}', contentType: 'application/json' }))
   await page.getByRole('navigation', { name: 'Principal' }).getByText('Sair', { exact: true }).click()
-  await expect(page).toHaveURL(/\/login/)
+  await expect(page).toHaveURL(/\/login$/)
 })

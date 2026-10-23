@@ -34,13 +34,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const sair = useCallback(async () => {
+    // Limpa o estado local antes de qualquer await: o chamador navega para /login em seguida.
+    setGestor(null)
     try {
       await logout()
     } catch (e) {
       // O cookie pode continuar valido no servidor; o estado local e limpo de qualquer forma.
       console.error('Falha ao encerrar a sessao no servidor', e)
-    } finally {
-      setGestor(null)
     }
   }, [])
 

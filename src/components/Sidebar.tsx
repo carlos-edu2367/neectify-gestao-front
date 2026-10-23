@@ -1,3 +1,4 @@
+import { startTransition } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthProvider'
 
@@ -14,10 +15,15 @@ export function Sidebar() {
   const navigate = useNavigate()
   const auth = useAuth()
 
-  async function sair() {
-    // Navega primeiro para o RequireAuth nao anexar `voltar` ao limpar a sessao.
-    navigate('/login', { replace: true })
-    await auth.sair() // nunca rejeita: falhas sao registradas e a sessao local e limpa
+  function sair() {
+    // sair() limpa a sessao local de forma sincrona. Navegacao do router roda em transition;
+    // as duas atualizacoes precisam entrar juntas, senao o RequireAuth anexa um `voltar` espurio.
+    let encerrando: Promise<void> = Promise.resolve()
+    startTransition(() => {
+      encerrando = auth.sair() // nunca rejeita: falhas sao registradas
+      navigate('/login', { replace: true })
+    })
+    return encerrando
   }
 
   const link = ({ isActive }: { isActive: boolean }) =>
