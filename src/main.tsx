@@ -3,6 +3,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import { AuthProvider } from './auth/AuthProvider'
+import { SessaoExpirada } from './auth/SessaoExpirada'
 import './styles.css'
 
 const queryClient = new QueryClient({
@@ -18,7 +20,10 @@ async function boot() {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <App />
+          <AuthProvider>
+            <SessaoExpirada />
+            <App />
+          </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </StrictMode>,

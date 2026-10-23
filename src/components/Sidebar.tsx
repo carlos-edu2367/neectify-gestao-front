@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { logout } from '../api/auth'
+import { useAuth } from '../auth/AuthProvider'
 
 const ITENS = [
   { to: '/funil', label: 'Funil' },
@@ -12,13 +12,12 @@ const base = 'flex items-center rounded-md px-3 py-2 text-sm'
 /** Navegacao: barra lateral no desktop (>= md), barra inferior no celular. */
 export function Sidebar() {
   const navigate = useNavigate()
+  const auth = useAuth()
 
   async function sair() {
-    try {
-      await logout()
-    } finally {
-      navigate('/login', { replace: true })
-    }
+    // Navega primeiro para o RequireAuth nao anexar `voltar` ao limpar a sessao.
+    navigate('/login', { replace: true })
+    await auth.sair() // nunca rejeita: falhas sao registradas e a sessao local e limpa
   }
 
   const link = ({ isActive }: { isActive: boolean }) =>
