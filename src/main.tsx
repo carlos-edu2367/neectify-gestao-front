@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { AuthProvider } from './auth/AuthProvider'
 import { SessaoExpirada } from './auth/SessaoExpirada'
+import { ToastProvider } from './components/Toast'
 import './styles.css'
 
 const queryClient = new QueryClient({
@@ -22,7 +23,9 @@ async function boot() {
         <BrowserRouter>
           <AuthProvider>
             <SessaoExpirada />
-            <App />
+            <ToastProvider>
+              <App />
+            </ToastProvider>
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>

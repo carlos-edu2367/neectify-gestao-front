@@ -37,6 +37,8 @@ test('sessao expirada em /v1/leads redireciona ao login com voltar', async ({ pa
   await page.goto('/login')
   await entrar(page)
   await expect(page).toHaveURL(/\/funil$/)
+  // espera o quadro carregar: expirar com a consulta inicial em voo faria o 401 vir antes do clique
+  await expect(page.getByTestId('card-lead').first()).toBeVisible()
   await page.evaluate(() => (window as unknown as { __neectifyMock: { expireSession(): void } }).__neectifyMock.expireSession())
   // consulta feita sem recarregar a pagina
   await page.getByRole('button', { name: 'Atualizar' }).click()
