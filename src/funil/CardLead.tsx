@@ -32,7 +32,7 @@ export function CardLead({ lead, agora, menu, onMover }: Props) {
       data-categoria={lead.categoria}
       data-parado={parado}
       onClick={() => navigate(`/leads/${lead.id}`)}
-      {...(menu ? {} : { ...attributes, ...listeners })}
+      {...(menu ? {} : { ...attributes, ...listeners, role: 'group' })}
       className={`cursor-pointer rounded-lg border bg-ink-2 p-3 text-left transition-colors hover:border-white/20 ${
         parado ? 'border-cyan/50 shadow-[inset_3px_0_0_var(--color-cyan)]' : 'border-line'
       } ${isDragging ? 'opacity-40' : ''} ${menu ? '' : 'touch-manipulation select-none'}`}
