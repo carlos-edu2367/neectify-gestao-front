@@ -109,3 +109,45 @@ test('status do drawer move o card no funil', async ({ page }) => {
     page.getByRole('region', { name: 'Conversando', exact: true }).locator('[data-nome="Juliana Prado"]'),
   ).toBeVisible()
 })
+
+const OUTRO = '00000000-0000-4000-8000-000000000101'
+
+async function irPara(page: Page, id: string) {
+  await page.evaluate((i) => {
+    window.history.pushState({}, '', `/leads/${i}`)
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  }, id)
+  await expect(page).toHaveURL(new RegExp(`/leads/${id}$`))
+  await expect(drawer(page).getByRole('heading', { name: 'Marcos Oliveira' })).toBeVisible()
+}
+
+test('rascunho de nota nao vaza para outro lead', async ({ page }) => {
+  await drawer(page).getByLabel('Nova anotação').fill('so para a Juliana')
+  await irPara(page, OUTRO)
+  await expect(drawer(page).getByLabel('Nova anotação')).toHaveValue('')
+})
+
+test('mensagem de 409 nao vaza para outro lead', async ({ page }) => {
+  const d = drawer(page)
+  await d.getByLabel('Título').fill('Organização de encomendas')
+  await d.getByLabel('Valor').fill('4500')
+  await page.evaluate(async (id) => {
+    await fetch(`/v1/leads/${id}/projeto`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json', 'X-Neectify-Client': 'painel' },
+      body: JSON.stringify({ titulo: 'Primeiro', valor: '100', forma_pagamento: 'PIX' }),
+    })
+  }, JULIANA)
+  await d.getByRole('button', { name: 'Converter em projeto' }).click()
+  await expect(page.getByText('Esse lead já virou projeto.')).toBeVisible()
+  await irPara(page, OUTRO)
+  await expect(page.getByText('Esse lead já virou projeto.')).toHaveCount(0)
+})
+
+test('fechar substitui a entrada do historico (Voltar nao reabre)', async ({ page }) => {
+  await page.keyboard.press('Escape')
+  await expect(drawer(page)).toHaveCount(0)
+  await page.goBack()
+  await expect(drawer(page)).toHaveCount(0)
+})

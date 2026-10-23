@@ -202,30 +202,28 @@ function Conversao({ lead, onConflito }: { lead: LeadDetail; onConflito: (msg: s
   )
 }
 
-export function LeadDrawer() {
-  const { id } = useParams()
+/** Conteudo do drawer; montado com key={id} para zerar todo estado por lead. */
+function DrawerConteudo({ id }: { id: string }) {
   const navigate = useNavigate()
   const consulta = useLead(id)
   const { mutate: mudarStatus } = useMudarStatus()
   const [conflito, setConflito] = useState<string | null>(null)
   const painel = useRef<HTMLDivElement>(null)
 
-  const fechar = () => navigate('/funil')
+  const fechar = () => navigate('/funil', { replace: true })
 
   useEffect(() => {
-    if (id) painel.current?.focus()
-  }, [id])
+    painel.current?.focus()
+  }, [])
 
   useEffect(() => {
-    if (!id) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') navigate('/funil')
+      if (e.key === 'Escape') navigate('/funil', { replace: true })
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [id, navigate])
+  }, [navigate])
 
-  if (!id) return null
   const lead = consulta.data
   const tag = lead ? CATEGORIA_TAG[lead.categoria] : null
 
@@ -353,4 +351,10 @@ export function LeadDrawer() {
       </div>
     </div>
   )
+}
+
+export function LeadDrawer() {
+  const { id } = useParams()
+  if (!id) return null
+  return <DrawerConteudo key={id} id={id} />
 }
