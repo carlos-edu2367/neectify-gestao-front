@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+@import '@fontsource/instrument-sans/400';
+@import '@fontsource/instrument-sans/500';
+@import '@fontsource/instrument-sans/600';
+@import '@fontsource/jetbrains-mono/400';
+@import '@fontsource/jetbrains-mono/500';
+@import '@fontsource/big-shoulders-display/800';
+@import '@fontsource/big-shoulders-display/900';
+
+@theme {
+  --color-ink: #05050a;
+  --color-ink-2: #0b0b14;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-text: #ededf3;
+  --color-muted: #9a9aae;
+  --color-cyan: #2ee6f0;
+  --color-purple: #7c4dff;
+  --color-danger: #ff5c7a;
+
+  --font-sans: 'Instrument Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Big Shoulders Display', 'Instrument Sans', sans-serif;
+}
+
+:root {
+  --grad: linear-gradient(90deg, #2ee6f0, #7c4dff);
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ferramenta: sem rolagem suave, foco sempre visivel. */
+html {
+  scroll-behavior: auto;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
