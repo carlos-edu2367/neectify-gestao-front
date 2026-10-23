@@ -33,6 +33,37 @@ export const addNota = (id: string, texto: string) =>
 export const converterEmProjeto = (id: string, body: ProjetoCreate) =>
   apiFetch<ProjetoOut>(`/v1/leads/${id}/projeto`, { method: 'POST', body: JSON.stringify(body) })
 
+export const leadKey = (id: string) => ['lead', id] as const
+
+export function useLead(id: string | undefined) {
+  return useQuery({
+    queryKey: leadKey(id ?? ''),
+    queryFn: () => getLead(id as string),
+    enabled: !!id,
+    retry: false,
+  })
+}
+
+export function useAdicionarNota(id: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (texto: string) => addNota(id, texto),
+    onSuccess: () => qc.invalidateQueries({ queryKey: leadKey(id) }),
+  })
+}
+
+export function useConverterProjeto(id: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (body: ProjetoCreate) => converterEmProjeto(id, body),
+    onSettled: () => {
+      void qc.invalidateQueries({ queryKey: leadKey(id) })
+      void qc.invalidateQueries({ queryKey: ['leads'] })
+      void qc.invalidateQueries({ queryKey: ['projetos'] })
+    },
+  })
+}
+
 export interface FiltrosLeads {
   categoria?: Categoria
   q?: string
@@ -56,7 +87,10 @@ export function useMudarStatus() {
     mutationFn: ({ id, status }: { id: string; status: LeadStatus }) => updateLeadStatus(id, status),
     onMutate: async ({ id, status }) => {
       await qc.cancelQueries({ queryKey: ['leads'] })
+      await qc.cancelQueries({ queryKey: leadKey(id) })
       const anteriores = qc.getQueriesData<LeadsPage>({ queryKey: ['leads'] })
+      const detalhe = qc.getQueryData<LeadDetail>(leadKey(id))
+      if (detalhe) qc.setQueryData<LeadDetail>(leadKey(id), { ...detalhe, status })
       const agora = new Date().toISOString()
       qc.setQueriesData<LeadsPage>({ queryKey: ['leads'] }, (page) =>
         page
@@ -68,12 +102,16 @@ export function useMudarStatus() {
             }
           : page,
       )
-      return { anteriores }
+      return { anteriores, detalhe, id }
     },
     onError: (_erro, _vars, ctx) => {
       for (const [key, data] of ctx?.anteriores ?? []) qc.setQueryData(key, data)
+      if (ctx?.detalhe) qc.setQueryData(leadKey(ctx.id), ctx.detalhe)
       aviso('Não foi possível mover o lead. Tente de novo.')
     },
-    onSettled: () => qc.invalidateQueries({ queryKey: ['leads'] }),
+    onSettled: (_d, _e, { id }) => {
+      void qc.invalidateQueries({ queryKey: leadKey(id) })
+      return qc.invalidateQueries({ queryKey: ['leads'] })
+    },
   })
 }

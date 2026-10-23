@@ -16,8 +16,11 @@ export default function App() {
       <Route element={<RequireAuth />}>
         <Route element={<Shell />}>
           <Route index element={<Navigate to="/funil" replace />} />
-          <Route path="/funil" element={<Funil />} />
-          <Route path="/leads/:id" element={<Funil />} />
+          {/* Layout compartilhado: o funil continua montado atras do drawer (/leads/:id). */}
+          <Route element={<Funil />}>
+            <Route path="/funil" element={null} />
+            <Route path="/leads/:id" element={null} />
+          </Route>
           <Route path="/dashboard" element={<Placeholder titulo="Dashboard" />} />
           <Route path="/projetos" element={<Placeholder titulo="Projetos" />} />
         </Route>

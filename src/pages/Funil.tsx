@@ -13,6 +13,7 @@ import type { Categoria, LeadStatus } from '../api/types'
 import { Coluna } from '../funil/Coluna'
 import { Filtros } from '../funil/Filtros'
 import { useCursorGrosso } from '../funil/useCursorGrosso'
+import { LeadDrawer } from './LeadDrawer'
 import { agruparPorStatus, COLUNAS } from '../lib/funil'
 
 const LIMITE = 200
@@ -111,6 +112,7 @@ export function Funil() {
           </DragOverlay>
         </DndContext>
       )}
+      <LeadDrawer />
     </div>
   )
 }
