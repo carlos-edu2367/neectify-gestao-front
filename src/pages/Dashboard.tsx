@@ -79,8 +79,11 @@ function BarrasSemana({ dados }: { dados: { semana: string; total: number }[] })
             title={`Semana de ${rotuloSemana(d.semana)}: ${d.total}`}
             className="group flex h-full min-w-0 flex-1 flex-col justify-end"
           >
-            <span className="mb-1 text-center font-mono text-[10px] text-muted opacity-0 group-hover:opacity-100">
-              {d.total}
+            <span
+              data-testid="valor-barra"
+              className="mb-1 h-3 text-center font-mono text-[9px] leading-3 text-muted"
+            >
+              {d.total > 0 ? d.total : ''}
             </span>
             <div
               className="rounded-t"
