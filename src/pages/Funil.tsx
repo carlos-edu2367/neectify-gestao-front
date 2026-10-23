@@ -8,6 +8,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core'
 import { useCallback, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useLeads, useMudarStatus } from '../api/leads'
 import type { Categoria, LeadStatus } from '../api/types'
 import { Coluna } from '../funil/Coluna'
@@ -24,6 +25,8 @@ export function Funil() {
   const consulta = useLeads({ categoria, q })
   const { mutate } = useMudarStatus()
   const menu = useCursorGrosso()
+  const [params] = useSearchParams()
+  const foco = COLUNAS.find((c) => c === params.get('status'))
   const [arrastando, setArrastando] = useState<string | null>(null)
 
   // Sem TouchSensor: so ponteiro fino arrasta. Distancia minima evita arrastar ao clicar.
@@ -99,7 +102,7 @@ export function Funil() {
             className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 md:mx-0 md:snap-none md:px-0"
           >
             {COLUNAS.map((c) => (
-              <Coluna key={c} status={c} leads={grupos[c]} agora={agora} menu={menu} onMover={mover} />
+              <Coluna key={c} status={c} foco={c === foco} leads={grupos[c]} agora={agora} menu={menu} onMover={mover} />
             ))}
           </div>
           <DragOverlay>

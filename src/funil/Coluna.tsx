@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import type { LeadOut, LeadStatus } from '../api/types'
 import { LEAD_STATUS_LABEL } from '../lib/labels'
@@ -8,18 +9,28 @@ interface Props {
   leads: LeadOut[]
   agora: Date
   menu: boolean
+  /** Coluna em foco (vindo do dashboard): destaque e rolagem ate ela. */
+  foco?: boolean
   onMover: (id: string, status: LeadStatus) => void
 }
 
-export function Coluna({ status, leads, agora, menu, onMover }: Props) {
+export function Coluna({ status, leads, agora, menu, foco, onMover }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id: status, disabled: menu })
+  const ref = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    if (foco) ref.current?.scrollIntoView?.({ inline: 'start', block: 'nearest' })
+  }, [foco])
   const titulo = LEAD_STATUS_LABEL[status]
   return (
     <section
-      ref={setNodeRef}
+      ref={(el) => {
+        ref.current = el
+        setNodeRef(el)
+      }}
+      data-foco={foco ? 'true' : undefined}
       aria-label={titulo}
       className={`flex w-[82vw] max-w-80 shrink-0 snap-start flex-col rounded-xl border bg-white/[.02] md:w-auto md:max-w-none md:min-w-48 md:flex-1 ${
-        isOver ? 'border-cyan/60' : 'border-line'
+        isOver || foco ? 'border-cyan/60' : 'border-line'
       }`}
     >
       <header className="flex items-center justify-between px-3 py-2.5">

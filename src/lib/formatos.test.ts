@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatarBRL, formatarData, linkWhatsApp, ou, valorParaApi } from './formatos'
+import { formatarBRL, formatarData, formatarTaxa, linkWhatsApp, ou, rotuloSemana, valorParaApi } from './formatos'
 
 const nbsp = (s: string) => s.replace(/ /g, ' ')
 
@@ -45,5 +45,22 @@ describe('ou', () => {
     expect(ou(undefined)).toBe('—')
     expect(ou('  ')).toBe('—')
     expect(ou('x')).toBe('x')
+  })
+})
+
+describe('formatarTaxa', () => {
+  it.each([
+    [0.75, '75%'],
+    [0, '0%'],
+    [0.333, '33%'],
+  ])('%s -> %s', (t, saida) => {
+    expect(formatarTaxa(t)).toBe(saida)
+  })
+})
+
+describe('rotuloSemana', () => {
+  it('formata YYYY-MM-DD como dd/MM sem deslocar o dia', () => {
+    expect(rotuloSemana('2026-10-19')).toBe('19/10')
+    expect(rotuloSemana('2026-01-05')).toBe('05/01')
   })
 })

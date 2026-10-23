@@ -45,3 +45,14 @@ export function formatarData(iso: string): string {
 export function ou(valor: string | null | undefined): string {
   return valor && valor.trim() ? valor : '—'
 }
+
+/** 0.75 -> "75%". */
+export function formatarTaxa(t: number): string {
+  return `${Math.round(t * 100)}%`
+}
+
+/** "YYYY-MM-DD" (data de calendario, nao instante) -> "dd/MM", sem passar por Date/UTC. */
+export function rotuloSemana(semana: string): string {
+  const [, mes, dia] = semana.split('-')
+  return `${dia}/${mes}`
+}

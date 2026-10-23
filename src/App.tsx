@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './auth/RequireAuth'
 import { Shell } from './components/Shell'
+import { Dashboard } from './pages/Dashboard'
 import { Funil } from './pages/Funil'
 import { Login } from './pages/Login'
 
@@ -21,7 +22,7 @@ export default function App() {
             <Route path="/funil" element={null} />
             <Route path="/leads/:id" element={null} />
           </Route>
-          <Route path="/dashboard" element={<Placeholder titulo="Dashboard" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projetos" element={<Placeholder titulo="Projetos" />} />
         </Route>
       </Route>
