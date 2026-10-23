@@ -10,6 +10,11 @@ export class ApiError extends Error {
 }
 
 const BASE: string = import.meta.env.VITE_API_URL ?? ''
+const MOCK = import.meta.env.DEV && import.meta.env.VITE_API_MOCK === '1'
+
+if (!BASE && !MOCK) {
+  throw new Error('VITE_API_URL nao definida: configure a URL da API (ex.: https://api.neectify.com).')
+}
 
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   let res: Response
@@ -37,5 +42,9 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
     throw new ApiError(res.status, detail)
   }
   if (res.status === 204) return undefined as T
-  return (await res.json()) as T
+  try {
+    return (await res.json()) as T
+  } catch {
+    throw new ApiError(0, 'resposta_invalida')
+  }
 }

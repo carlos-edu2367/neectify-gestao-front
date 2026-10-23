@@ -7,5 +7,6 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['src/**/*.test.{ts,tsx}'],
     globals: false,
+    env: { VITE_API_MOCK: '1' },
   },
 })

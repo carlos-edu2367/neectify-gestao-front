@@ -13,7 +13,7 @@ const queryClient = new QueryClient({
 })
 
 async function boot() {
-  if (import.meta.env.VITE_API_MOCK === '1') {
+  if (import.meta.env.DEV && import.meta.env.VITE_API_MOCK === '1') {
     const { startMocks } = await import('./mocks/browser')
     await startMocks()
   }

@@ -92,7 +92,7 @@ export function Funil() {
 
       {consulta.data && (
         <DndContext
-          sensors={menu ? [] : sensores}
+          sensors={sensores}
           onDragStart={(e: DragStartEvent) => setArrastando(String(e.active.id))}
           onDragEnd={aoSoltar}
           onDragCancel={() => setArrastando(null)}

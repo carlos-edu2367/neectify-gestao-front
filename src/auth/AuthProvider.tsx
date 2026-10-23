@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { login, logout, me } from '../api/auth'
 import type { Usuario } from '../api/types'
 
@@ -14,6 +15,7 @@ interface AuthValue {
 const AuthContext = createContext<AuthValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const qc = useQueryClient()
   const [gestor, setGestor] = useState<Usuario | null>(null)
   const [carregando, setCarregando] = useState(true)
 
@@ -36,15 +38,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const sair = useCallback(async () => {
     // Limpa o estado local antes de qualquer await: o chamador navega para /login em seguida.
     setGestor(null)
+    qc.clear()
     try {
       await logout()
     } catch (e) {
       // O cookie pode continuar valido no servidor; o estado local e limpo de qualquer forma.
       console.error('Falha ao encerrar a sessao no servidor', e)
     }
-  }, [])
+  }, [qc])
 
-  const expirar = useCallback(() => setGestor(null), [])
+  const expirar = useCallback(() => {
+    setGestor(null)
+    qc.clear()
+  }, [qc])
 
   const value = useMemo(
     () => ({ gestor, carregando, entrar, sair, expirar }),

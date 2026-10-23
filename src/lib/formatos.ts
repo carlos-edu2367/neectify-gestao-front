@@ -17,7 +17,10 @@ export function valorParaApi(texto: string): string | null {
   } else {
     return null
   }
-  return Number(numero).toFixed(2)
+  const [inteiro, decimal = ''] = numero.split('.')
+  const parteInteira = inteiro.replace(/^0+(?=\d)/, '')
+  if (parteInteira.length > 10) return null // backend: Numeric(12,2)
+  return `${parteInteira}.${decimal.padEnd(2, '0')}`
 }
 
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
